@@ -19,6 +19,7 @@ button {
   border: none;
   font-size: 1.2em;
   outline: none;
+  cursor: pointer;
 }
 
 
@@ -54,8 +55,9 @@ header {
   flex-grow: 1;
 }
 
-#items {
+main {
   flex-grow: 1;
+  overflow-y: auto;
 }
 
 
@@ -103,6 +105,26 @@ header {
 
 #add-item {
   margin-left: 25px;
-  color: black;
-  background-color: white;
+  color: white;
+  background-color: dodgerblue; 
+}
+
+/* add item disabled */
+#add-item[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.read-item {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  border-bottom: 2px solid lightgray;
+  background-color: #FAFAFA;
+  padding: 10px;
+}
+
+.read-item img {
+  width: 20%;
+  margin-right: 25px;
 }

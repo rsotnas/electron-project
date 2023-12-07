@@ -1,10 +1,20 @@
 // Modules
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const windowStateKeeper = require("electron-window-state");
+const readItem = require("./functions/readItem");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+
+ipcMain.on("new-item", (e, itemURL) => {
+  console.log(itemURL);
+
+  readItem(itemURL, (item) => {
+    // console.log("sending new-item-success");
+    e.sender.send("new-item-success", item);
+  });
+});
 
 // Create a new BrowserWindow when `app` is ready
 function createWindow() {
@@ -26,7 +36,7 @@ function createWindow() {
       // --- !! IMPORTANT !! ---
       // Disable 'contextIsolation' to allow 'nodeIntegration'
       // 'contextIsolation' defaults to "true" as from Electron v12
-      // contextIsolation: false,
+      contextIsolation: false,
       nodeIntegration: true,
     },
     // show: false
@@ -34,7 +44,6 @@ function createWindow() {
 
   // Load index.html into the new BrowserWindow
   mainWindow.loadFile("renderer/main.html");
-  // mainWindow.loadURL('https://watch.clickservices.com.br')
 
   mainWindowState.manage(mainWindow);
 

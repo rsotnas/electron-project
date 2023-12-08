@@ -122,6 +122,19 @@ main {
   border-bottom: 2px solid lightgray;
   background-color: #FAFAFA;
   padding: 10px;
+  cursor: pointer;
+  border-left: 4px solid lightgray;
+  -webkit-user-select: none;
+}
+
+.read-item:hover {
+  border-left-color: dodgerblue;
+  background-color: #E8F0FE;
+}
+
+.read-item.selected {
+  border-left-color: dodgerblue;
+  background-color: #E8F0FE;
 }
 
 .read-item img {

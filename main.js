@@ -2,18 +2,40 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const windowStateKeeper = require("electron-window-state");
 const readItem = require("./functions/readItem");
+const createNewWindow = require("./functions/createNewWindow");
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
 
-ipcMain.on("new-item", (e, itemURL) => {
-  console.log(itemURL);
+let childWindows = [];
 
+ipcMain.on("new-item", (e, itemURL) => {
   readItem(itemURL, (item) => {
     // console.log("sending new-item-success");
     e.sender.send("new-item-success", item);
   });
+});
+
+ipcMain.on("item-done", (e, index) => {
+  // close the window
+  childWindows[index].close();
+  childWindows[index] = null;
+  // childWindows.splice(index, 1);
+  // if every child is null, them empty the array
+  if (childWindows.every((child) => child === null)) {
+    childWindows = [];
+  }
+  console.log("childWindows", childWindows);
+
+  // destroy the window
+});
+
+ipcMain.on("open-item", (e, itemURL) => {
+  // get index of item
+  let index = childWindows.length;
+
+  childWindows.push(createNewWindow(itemURL, index));
 });
 
 // Create a new BrowserWindow when `app` is ready
@@ -46,6 +68,11 @@ function createWindow() {
   mainWindow.loadFile("renderer/main.html");
 
   mainWindowState.manage(mainWindow);
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    console.log("url", url);
+    return { action: "allow" };
+  });
 
   // Open DevTools - Remove for PRODUCTION!
   // mainWindow.webContents.openDevTools();

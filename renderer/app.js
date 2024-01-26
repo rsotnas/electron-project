@@ -8,6 +8,27 @@ let addItem = document.getElementById("add-item");
 let itemUrl = document.getElementById("url");
 let search = document.getElementById("search");
 
+ipcRenderer.on("menu-show-modal", () => {
+  showModal.click();
+});
+
+ipcRenderer.on("menu-open-item", () => {
+  items.open();
+});
+
+ipcRenderer.on("menu-delete-item", () => {
+  let selectedItem = items.getSelectedItem();
+  items.delete(selectedItem.index);
+});
+
+ipcRenderer.on("menu-open-item-native", () => {
+  items.openNative();
+});
+
+ipcRenderer.on("menu-focus-search", () => {
+  search.focus();
+});
+
 // filter items by title
 search.addEventListener("keyup", (e) => {
   Array.from(document.getElementsByClassName("read-item")).forEach((item) => {

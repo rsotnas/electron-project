@@ -1,4 +1,5 @@
 const { ipcRenderer } = require("electron");
+const { shell } = require("electron");
 
 let items = document.getElementById("items");
 
@@ -20,6 +21,32 @@ exports.select = (e) => {
     .classList.remove("selected");
 
   e.currentTarget.classList.add("selected");
+};
+
+exports.getSelectedItem = () => {
+  let currentItem = document.getElementsByClassName("read-item selected")[0];
+
+  let itemIndex = 0;
+  let child = currentItem;
+  while ((child = child.previousElementSibling) != null) itemIndex++;
+
+  return { node: currentItem, index: itemIndex };
+};
+
+exports.delete = (index) => {
+  items.removeChild(items.childNodes[index]);
+
+  this.storage.splice(index, 1);
+
+  this.save();
+
+  if (this.storage.length) {
+    let newSelectedItemIndex = index === 0 ? 0 : index - 1;
+
+    document
+      .getElementsByClassName("read-item")
+      [newSelectedItemIndex].classList.add("selected");
+  }
 };
 
 exports.open = () => {
@@ -71,4 +98,14 @@ exports.changeSelection = (direction) => {
     currentItem.classList.remove("selected");
     currentItem.nextElementSibling.classList.add("selected");
   }
+};
+
+exports.openNative = () => {
+  if (!this.storage.length) return;
+
+  let selectedItem = this.getSelectedItem();
+
+  let contentURL = selectedItem.node.dataset.url;
+
+  shell.openExternal(contentURL);
 };
